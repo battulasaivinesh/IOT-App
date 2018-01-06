@@ -7,6 +7,9 @@ ScreenManagement:
     ReactorScreen2:
     ReactorScreen3:
 
+
+#####---------       Custom Widgets     ---------#########
+
 <Reactor@BoxButton>:
 	orientation: 'vertical'
 	size_hint_x: None
@@ -28,8 +31,26 @@ ScreenManagement:
 			size: self.size
 			pos: (self.x, self.y)
 
-<ReactorScreen1>
-	name: 'reactor1'
+
+#####-----    Internet Status Bar   --------#########
+
+
+<NetLab>:
+    netstatuscolor: [.2, .2, .2, .6]
+    netstattxt: ''
+    Label:
+        text: root.netstattxt
+        canvas.before:
+            Color:
+                rgba: root.netstatuscolor
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+
+#####-----    Main Reactor Screen  --------#########
+
+<ReactorScreen>
 	GridLayout:
 		cols:1
 		id:main_reactor
@@ -49,7 +70,7 @@ ScreenManagement:
 				size:(main_reactor.width/5,0)
 				on_press: root.back() 
 			Label:
-				id: main_label
+				id: label
 				text: 'ONE'
 				font_size: '20sp'
 				color: (0, 0, 0, 1)
@@ -107,168 +128,28 @@ ScreenManagement:
 			    	valign: 'middle'
 			    	size_hint_y: None 
 			    	size: (0, 100)
+	NetLab:
+		size_hint:(1,0.05)
+		id: net
+
+
+#####------     Multiple Reactor Screens -----########
+
+
+
+
+<ReactorScreen1>
+	name: 'reactor1'
 
 <ReactorScreen2>
 	name: 'reactor2'
-	GridLayout:
-		cols:1
-		id:main_reactor
-		BoxLayout:
-			orientation: 'horizontal'
-			size_hint_y: None 
-			size: (0,main_reactor.height/10 )
-			canvas:
-				Color:
-					rgba: 0.8,0.8,0.8,1
-				Rectangle:	
-					size: self.size
-					pos: (self.x, self.y)
-			Button:
-				text:'Back'
-				size_hint: (None, 1)
-				size:(main_reactor.width/5,0)
-				on_press: root.back() 
-			Label:
-				id: main_label
-				text: 'TWO'
-				font_size: '20sp'
-				color: (0, 0, 0, 1)
-
-					
-					
-		BoxLayout:	
-			orientation: 'horizontal'
-			size_hint:1,1
-			canvas:
-				Color:
-					rgba: 0.5,0.5,0.5,1
-				Rectangle:	
-					size: self.size
-			FloatLayout:
-				size_hint:0.5,1
-				Image:
-					allow_stretch: True
-					source: 'reactor2@1.5.png'
-					size_hint_x: 1
-					size_hint_y: 0.5
-					pos_hint: {'left': 0,'top':0.75}
-					allow_stretch: True
-			GridLayout:
-				cols:1
-			    size_hint:(0.5,1)
-			    Label:
-			    	text: 'Temperature1 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Temperature2 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Humidity - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Vapour Pressure - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
 
 <ReactorScreen3>
 	name: 'reactor3'
-	GridLayout:
-		cols:1
-		id:main_reactor
-		BoxLayout:
-			orientation: 'horizontal'
-			size_hint_y: None 
-			size: (0,main_reactor.height/10 )
-			canvas:
-				Color:
-					rgba: 0.8,0.8,0.8,1
-				Rectangle:	
-					size: self.size
-					pos: (self.x, self.y)
-			Button:
-				text:'Back'
-				size_hint: (None, 1)
-				size:(main_reactor.width/5,0)
-				on_press: root.back() 
-			Label:
-				id: main_label
-				text: 'THREE'
-				font_size: '20sp'
-				color: (0, 0, 0, 1)
 
-					
-					
-		BoxLayout:	
-			orientation: 'horizontal'
-			size_hint:1,1
-			canvas:
-				Color:
-					rgba: 0.5,0.5,0.5,1
-				Rectangle:	
-					size: self.size
-			FloatLayout:
-				size_hint:0.5,1
-				Image:
-					source: 'reactor@1.5.png'
-					size_hint_x: 1
-					size_hint_y: 0.5
-					pos_hint: {'left': 0,'top':0.75}
-					allow_stretch: True
-			GridLayout:
-				cols:1
-			    size_hint:(0.5,1)
-			    Label:
-			    	text: 'Temperature1 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Temperature2 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Humidity - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Vapour Pressure - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
 
+
+#########-------------    Main Menu Screen  -------------######
 <MenuScreen>	
 	name: 'main'
 	BoxLayout:
