@@ -1,11 +1,15 @@
 #:import ScrollEffect kivy.effects.scroll.ScrollEffect
 #:import SlideTransition kivy.uix.screenmanager.SlideTransition
+#:import MeshLinePlot kivy.garden.graph.MeshLinePlot
+#:import get_color_from_hex kivy.utils.get_color_from_hex
 ScreenManagement:
     transition: SlideTransition(direction='left')
     MenuScreen:
     ReactorScreen1:
     ReactorScreen2:
     ReactorScreen3:
+    ReactorScreen4:
+
 
 
 #####---------       Custom Widgets     ---------#########
@@ -26,10 +30,39 @@ ScreenManagement:
 	size_hint_y: 0.2
 	canvas.before:
 		Color:
-			rgba: 0.5,0.5,0.5,1
+			rgba:  get_color_from_hex('E0E0E2')
 		Rectangle:	
 			size: self.size
 			pos: (self.x, self.y)
+
+<CanvasCustom>:
+    value: 60
+    angle: 0
+    strval: ''
+    sen_color: [.5, .3, .1, .8]
+    title: 'SENSOR 1'
+
+    Label:
+        size: self.texture_size
+        text: root.title
+
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: [.2, .2, .2, .6]
+            Line:
+                width: 0.015*root.width
+                circle: self.center_x,self.center_y-10,self.width/4,0,360
+
+            Color:
+                rgba: root.sen_color
+            Line:
+                width: 0.026*root.width
+                circle: self.center_x,self.center_y-10,self.width/4,0,root.angle
+        Label:
+            size: self.texture_size
+            center: self.center_x,self.center_y
+            text: root.strval
 
 
 #####-----    Internet Status Bar   --------#########
@@ -51,86 +84,303 @@ ScreenManagement:
 #####-----    Main Reactor Screen  --------#########
 
 <ReactorScreen>
-	GridLayout:
-		cols:1
-		id:main_reactor
+	humidity_value: 60
+	humidity_angle: 0
+	temp_value: 60
+    temp_angle: 0
+    main_header_color: [0,0,0,1]
+    humidity_strval: ''
+    temp_strval: ''
+    sen_color_temp: [0,0,0,1]
+    sen_color_humidity: [0,0,0,1]
+    title: 'HUMIDITY'
+	BoxLayout:
+		orientation: 'vertical'
+		id: main_mobile
 		BoxLayout:
-			orientation: 'horizontal'
-			size_hint_y: None 
-			size: (0,main_reactor.height/10 )
-			canvas:
+			size_hint: (1, 0.1)
+			canvas.before:
 				Color:
-					rgba: 0.8,0.8,0.8,1
-				Rectangle:	
+					rgba: root.main_header_color
+				Rectangle:
+					pos: self.pos
 					size: self.size
-					pos: (self.x, self.y)
 			Button:
-				text:'Back'
-				size_hint: (None, 1)
-				size:(main_reactor.width/5,0)
-				on_press: root.back() 
+				size_hint_x:0.2
+				text: '<'
+				on_press: root.back()
+				text_size: self.size
+				font_size: '35sp'
+				halign: 'center'
+				valign: 'middle'
+				background_normal: ''
+				background_down: ''
+				background_color: root.main_header_color
+				
 			Label:
-				id: label
-				text: 'ONE'
-				font_size: '20sp'
-				color: (0, 0, 0, 1)
+				id:main_label
+				size: self.texture_size
+				text: 'SENSOR 1'
+				text_size: self.size
+				font_size: '30sp'
+				halign: 'left'
+				valign: 'middle'
+				color: (1, 1, 1, 1)
+		ScrollView:
+			size_hint:(1,1)
+			do_scroll:True
+			bar_color: (1, 1, 1, 0)
+			effect_cls: ScrollEffect
+			StackLayout:
+				spacing: 0.4*main_mobile.height
+				id: reactor_main_layout
+				orientation: 'lr-tb'
+				size_hint: (1, None)
+				# padding: [0,0.2*main_mobile.height, 0, 0]
+				size: (0, 3*main_mobile.height)
+				canvas.before:
+					Color:
+						rgba: get_color_from_hex('#111929')
+					Rectangle:
+						pos: self.pos
+						size: self.size
+				GridLayout:
+					id:main_temp_cover
+					cols:1
+					size_hint:(1,0.4)
+					Label:
+						size_hint_y: 0.1
+						text: 'TEMPERATURE'
+						font_size: '25sp'
+					BoxLayout:
+						id:temp_meter
+						orientation: 'vertical'
+						size_hint: (1,0.4)
+						# size:(0, main_mobile.height/2)
+						canvas.before:
+							Color:
+								rgba: get_color_from_hex('#111929')
+							Rectangle:
+								pos: self.pos
+								size: self.size
+						BoxLayout:
+							size_hint: (1, 1)
+							orientation: 'vertical'
+							# size:(0, main_mobile.height/2)
+							
+
+							BoxLayout:
+								canvas.before:
+									Color:
+										rgba: [.2, .2, .2, .6]
+									Line:
+										width: 0.010*root.width
+										circle: self.center_x,self.center_y-10,self.width/4,0,360
+
+									Color:
+										rgba: root.sen_color_temp
+									Line:
+										width: 0.026*root.width
+										circle: self.center_x,self.center_y-10,self.width/4,0,root.temp_angle
+								Label:
+									size: self.texture_size
+									center: self.center_x,self.center_y
+									text: root.temp_strval
+									font_size: '25sp'
+					BoxLayout:
+						id:temp_graph_cover
+						orientation: 'vertical'
+						size_hint: (1, 0.5)
+						padding: [0.1*main_mobile.width, 0, 0.1*main_mobile.width,0]
+						# size:(0,main_mobile.height/2)
+						canvas.before:
+							Color:
+								rgba: get_color_from_hex('#111929')
+							Rectangle:
+								pos: self.pos
+								size: self.size
+						Graph:
+			                id: graph_temp
+			                xlabel: ""
+			                ylabel: "Level"
+			                xlabel:'Seconds'
+			                ylabel:'Temperature'
+			                x_ticks_minor:10
+			                x_ticks_major:25
+			                y_ticks_major:20
+			                y_grid_label:True
+			                x_grid_label:True
+			                padding:5
+			                x_grid:True
+			                y_grid:True
+			                xmin:-25
+			                xmax:25
+			                ymin:0
+			                ymax:100
+                GridLayout:
+                	id:main_humidity_cover
+                	cols:1
+                	size_hint: (1,0.4)
+	                Label:
+	                	id: humidity_label
+						size_hint: (1, 0.1)
+						text: 'HUMIDITY'
+						font_size: '25sp'
+					BoxLayout:
+						id:humid_meter
+						orientation: 'vertical'
+						size_hint: (1,0.4)
+						# size:(0, main_mobile.height/2)
+						canvas.before:
+							Color:
+								rgba: get_color_from_hex('#111929')
+							Rectangle:
+								pos: self.pos
+								size: self.size
+						BoxLayout:
+							size_hint: (1, 1)
+							orientation: 'vertical'
+							# size:(0, main_mobile.height/2)
+							
+							BoxLayout:
+								canvas.before:
+									Color:
+										rgba: [.2, .2, .2, .6]
+									Line:
+										width: 0.010*root.width
+										circle: self.center_x,self.center_y-10,self.width/4,0,360
+
+									Color:
+										rgba: root.sen_color_humidity
+									Line:
+										width: 0.026*root.width
+										circle: self.center_x,self.center_y-10,self.width/4,0,root.humidity_angle
+								Label:
+									size: self.texture_size
+									center: self.center_x,self.center_y
+									text: root.humidity_strval
+									font_size: '25sp'
+					
+	                BoxLayout:
+	                	id: humidity_graph_cover
+						orientation: 'vertical'
+						size_hint: (1, 0.5)
+						padding: [0.1*main_mobile.width, 0, 0.1*main_mobile.width, 0]
+						# size:(0,main_mobile.height/2)
+						canvas.before:
+							Color:
+								rgba: get_color_from_hex('#111929')
+							Rectangle:
+								pos: self.pos
+								size: self.size
+						Graph:
+			                id: graph_humidity
+			                xlabel: ""
+			                ylabel: "Level"
+			                xlabel:'Seconds'
+			                ylabel:'Humidity'
+			                x_ticks_minor:10
+			                x_ticks_major:25
+			                y_ticks_major:20
+			                y_grid_label:True
+			                x_grid_label:True
+			                padding:5
+			                x_grid:True
+			                y_grid:True
+			                xmin:-25
+			                xmax:25
+			                ymin:0
+			                ymax:100
+		NetLab:
+			size_hint: (1, 0.05)
+			id: net
+
+
+		   
+	        
+	    	
+	        
+	    
+	# BoxLayout:
+	# 	cols:1
+	# 	id:main_reactor
+	# 	BoxLayout:
+	# 		orientation: 'horizontal'
+	# 		size_hint_y: None 
+	# 		size: (0,main_reactor.height/10 )
+	# 		canvas:
+	# 			Color:
+	# 				rgba: 0.8,0.8,0.8,1
+	# 			Rectangle:	
+	# 				size: self.size
+	# 				pos: (self.x, self.y)
+	# 		Button:
+	# 			text:'Back'
+	# 			size_hint: (None, 1)
+	# 			size:(main_reactor.width/5,0)
+	# 			on_press: root.back() 
+	# 		Label:
+	# 			id: label
+	# 			text: 'Empty'
+	# 			font_size: '20sp'
+	# 			color: (0, 0, 0, 1)
 
 					
 					
-		BoxLayout:	
-			orientation: 'horizontal'
-			size_hint:1,1
-			canvas:
-				Color:
-					rgba: 0.5,0.5,0.5,1
-				Rectangle:	
-					size: self.size
-			FloatLayout:
-				size_hint:0.5,1
-				Image:
-					source: 'reactor@1.5.png'
-					size_hint_x: 1
-					size_hint_y: 0.5
-					pos_hint: {'left': 0,'top':0.75}
-					allow_stretch: True
-			GridLayout:
-				cols:1
-			    size_hint:(0.5,1)
-			    Label:
-			    	text: 'Temperature1 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Temperature2 - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Humidity - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-		    	Label:
-			    	text: 'Vapour Pressure - '
-			    	color: (0, 0, 0, 1)
-			    	text_size: self.size
-			    	halign: 'left'
-			    	valign: 'middle'
-			    	size_hint_y: None 
-			    	size: (0, 100)
-	NetLab:
-		size_hint:(1,0.05)
-		id: net
+	# 	BoxLayout:	
+	# 		orientation: 'horizontal'
+	# 		size_hint:1,1
+	# 		canvas:
+	# 			Color:
+	# 				rgba: 0.5,0.5,0.5,1
+	# 			Rectangle:	
+	# 				size: self.size
+	# 		FloatLayout:
+	# 			size_hint:0.5,1
+	# 			Image:
+	# 				source: 'reactor@1.5.png'
+	# 				size_hint_x: 1
+	# 				size_hint_y: 0.5
+	# 				pos_hint: {'left': 0,'top':0.75}
+	# 				allow_stretch: True
+	# 		GridLayout:
+	# 			cols:1
+	# 		    size_hint:(0.5,1)
+	# 		    Label:
+	# 		    	text: 'Temperature1 - '
+	# 		    	color: (0, 0, 0, 1)
+	# 		    	text_size: self.size
+	# 		    	halign: 'left'
+	# 		    	valign: 'middle'
+	# 		    	size_hint_y: None 
+	# 		    	size: (0, 100)
+	# 	    	Label:
+	# 		    	text: 'Temperature2 - '
+	# 		    	color: (0, 0, 0, 1)
+	# 		    	text_size: self.size
+	# 		    	halign: 'left'
+	# 		    	valign: 'middle'
+	# 		    	size_hint_y: None 
+	# 		    	size: (0, 100)
+	# 	    	Label:
+	# 		    	text: 'Humidity - '
+	# 		    	color: (0, 0, 0, 1)
+	# 		    	text_size: self.size
+	# 		    	halign: 'left'
+	# 		    	valign: 'middle'
+	# 		    	size_hint_y: None 
+	# 		    	size: (0, 100)
+	# 	    	Label:
+	# 		    	text: 'Vapour Pressure - '
+	# 		    	color: (0, 0, 0, 1)
+	# 		    	text_size: self.size
+	# 		    	halign: 'left'
+	# 		    	valign: 'middle'
+	# 		    	size_hint_y: None 
+	# 		    	size: (0, 100)
+	# NetLab:
+	# 	size_hint:(1,0.05)
+	# 	id: net
 
 
 #####------     Multiple Reactor Screens -----########
@@ -146,6 +396,9 @@ ScreenManagement:
 
 <ReactorScreen3>
 	name: 'reactor3'
+
+<ReactorScreen4>
+	name: 'reactor4'
 
 
 
@@ -173,7 +426,7 @@ ScreenManagement:
 				size:(0,main_phone.height/10)
 				canvas:
 					Color:
-						rgba: 0.5,0.5,0.5,1
+						rgba:get_color_from_hex('E0E0E2')
 					Rectangle:	
 						size: self.size
 						pos: (self.x, self.y)
@@ -181,9 +434,14 @@ ScreenManagement:
 				padding: 5
 				spacing: 5
 				cols:1
-				background_color: (0, 1, 1, 1)
-				size_hint: (1,1)
 				
+				size_hint: (1,1)
+				canvas.before:
+					Color:
+						rgba: get_color_from_hex('E0E0E2')
+					Rectangle:
+						pos: self.pos
+						size: self.size
 				BoxLayout:
 					orientation: 'horizontal'
 					size_hint: (1, 1)
@@ -197,51 +455,58 @@ ScreenManagement:
 							orientation: 'horizontal'
 							size_hint: (None, 1)
 							size: ((7*main_phone.width)/3, 0)
+							canvas.before:
+								Color:
+									rgba: get_color_from_hex('92ACDB')
+								Rectangle:
+									pos: self.pos
+									size: self.size
 							Reactor:
 								on_press: root.one()
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'active.png'
 								ReactorLabel:
 									text: 'One'
 							Reactor:
 								on_press: root.two()
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor2.png'
+									source: 'active.png'
 								ReactorLabel:
 									text: 'Two'
 							Reactor:
 								on_press: root.three()
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'active.png'
 								ReactorLabel:
 									text: 'Three'
 							Reactor:
+								on_press: root.four()
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'active.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Four'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 				BoxLayout:
 					orientation: 'horizontal'
 					size_hint: (1,1)
@@ -256,48 +521,54 @@ ScreenManagement:
 							orientation: 'horizontal'
 							size_hint: (None, 1)
 							size: ((7*main_phone.width)/3, 0)
+							canvas.before:
+								Color:
+									rgba: get_color_from_hex('92ACDB')
+								Rectangle:
+									pos: self.pos
+									size: self.size
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 				BoxLayout:
 					orientation: 'horizontal'
 					size_hint: (1, 1)
@@ -312,48 +583,54 @@ ScreenManagement:
 							orientation: 'horizontal'
 							size_hint: (None, 1)
 							size: ((7*main_phone.width)/3, 0)
+							canvas.before:
+								Color:
+									rgba: get_color_from_hex('92ACDB')
+								Rectangle:
+									pos: self.pos
+									size: self.size
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'	
+									source: 'inactive.png'	
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 				BoxLayout:
 					orientation: 'horizontal'
 					size_hint: (1, 1)
@@ -368,46 +645,52 @@ ScreenManagement:
 							orientation: 'horizontal'
 							size_hint: (None, 1)
 							size: ((7*main_phone.width)/3, 0)
+							canvas.before:
+								Color:
+									rgba: get_color_from_hex('92ACDB')
+								Rectangle:
+									pos: self.pos
+									size: self.size
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 							Reactor:
 								size: (main_phone.width/3,0)
 								Image:
-									source: 'reactor.png'
+									source: 'inactive.png'
 								ReactorLabel:
-									text: 'One'
+									text: 'Empty'
 
