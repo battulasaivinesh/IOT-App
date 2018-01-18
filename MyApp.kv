@@ -94,6 +94,7 @@ ScreenManagement:
     sen_color_temp: [0,0,0,1]
     sen_color_humidity: [0,0,0,1]
     title: 'HUMIDITY'
+    ratio: 4
 	BoxLayout:
 		orientation: 'vertical'
 		id: main_mobile
@@ -132,8 +133,8 @@ ScreenManagement:
 			bar_color: (1, 1, 1, 0)
 			effect_cls: ScrollEffect
 			StackLayout:
-				spacing: 0.4*main_mobile.height
 				id: reactor_main_layout
+				spacing: 0.4*main_mobile.height
 				orientation: 'lr-tb'
 				size_hint: (1, None)
 				# padding: [0,0.2*main_mobile.height, 0, 0]
@@ -175,13 +176,13 @@ ScreenManagement:
 										rgba: [.2, .2, .2, .6]
 									Line:
 										width: 0.010*root.width
-										circle: self.center_x,self.center_y-10,self.width/4,0,360
+										circle: self.center_x,self.center_y-10,self.width/root.ratio,0,360
 
 									Color:
 										rgba: root.sen_color_temp
 									Line:
 										width: 0.026*root.width
-										circle: self.center_x,self.center_y-10,self.width/4,0,root.temp_angle
+										circle: self.center_x,self.center_y-10,self.width/root.ratio,0,root.temp_angle
 								Label:
 									size: self.texture_size
 									center: self.center_x,self.center_y
@@ -248,13 +249,13 @@ ScreenManagement:
 										rgba: [.2, .2, .2, .6]
 									Line:
 										width: 0.010*root.width
-										circle: self.center_x,self.center_y-10,self.width/4,0,360
+										circle: self.center_x,self.center_y-10,self.width/root.ratio,0,360
 
 									Color:
 										rgba: root.sen_color_humidity
 									Line:
 										width: 0.026*root.width
-										circle: self.center_x,self.center_y-10,self.width/4,0,root.humidity_angle
+										circle: self.center_x,self.center_y-10,self.width/root.ratio,0,root.humidity_angle
 								Label:
 									size: self.texture_size
 									center: self.center_x,self.center_y

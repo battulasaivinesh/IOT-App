@@ -203,15 +203,14 @@ class ReactorScreen1(ReactorScreen):
 
     def _finish_init(self, dt): 
         pass
-        # print "added" 
-        # if Window.size[0] > 500:
-        #     self.ids.humid_meter.size_hint = (0.5,None)
-        #     self.ids.temp_meter.size_hint = (0.5,None)
-        #     self.ids.temp_graph_cover.size_hint = (0.5,None)
+        if Window.size[0] > 500:
+            self.ratio = 6
+        #     self.ids.main_humidity_cover.size_hint = (0.5,0.4)
+        #     self.ids.reactor_main_layout.spacing = 0
         #     self.ids.humidity_graph_cover.size_hint = (0.5,None)
         #     # print "yes"
-        # else:
-        #     self.ids.humid_meter.size_hint = (1,None)
+        else:
+            self.ratio = 4
         #     self.ids.temp_meter.size_hint = (1,None)
         #     self.ids.temp_graph_cover.size_hint = (1,None)
         #     self.ids.humidity_graph_cover.size_hint= (1,None)
