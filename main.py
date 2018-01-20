@@ -38,7 +38,7 @@ levels_temp = []
 levels_humidity = []
 
 for j in range(0,number_of_reactors):
-    for i in range(0,25):
+    for i in range(0,7200):
         temp_t.append(0)
         humidity_t.append(0)
     levels_temp.append(temp_t)
@@ -86,10 +86,10 @@ def get_data():
             for a in arr:
                 data.append(float(a))
             temp = data
-            # print temp
+            print temp
             for i in range(0,number_of_reactors):
                 levels_temp[i].append(temp[i])
-                if len(levels_temp[i]) > 26:
+                if len(levels_temp[i]) > 7201:
                     levels_temp[i].pop(0)
             
             # print levels_temp;
@@ -110,10 +110,10 @@ def get_data():
         time.sleep(1)
 
 
-# Sets the screen size on computer for development
+# # Sets the screen size on computer for development
 if platform not in ('android', 'ios'):
     Config.set('graphics', 'resizable', '0')
-    Window.size = (375, 667)
+    Window.size = (414, 736)
 
 # if platform not in ('android', 'ios'):
 #   Config.set('graphics', 'resizable', '0')
@@ -146,6 +146,18 @@ class CanvasCustom(BoxLayout):
 
 # Main Screen contaning a grid of reactors
 class MenuScreen(Screen):
+
+    def __init__(self,**kwargs):
+        super(MenuScreen, self).__init__(**kwargs)
+        Clock.schedule_once(self._finish_init)
+
+    def _finish_init(self, dt): 
+        if Window.size[0] > 500:
+            self.ratio = 5
+        else:
+            self.ratio = 3
+            
+
 
     ######  Transaction functions for on click event for each reactor ########
 
@@ -197,35 +209,33 @@ class ReactorScreen1(ReactorScreen):
         self.name = "reactor1"
         Clock.schedule_once(self._finish_init)
         Clock.schedule_interval(self.get_value, 1)
-        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
-        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
+        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#23C48E'))
+        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#04C0F8'))
 
 
     def _finish_init(self, dt): 
-        pass
+        
         if Window.size[0] > 500:
             self.ratio = 6
-        #     self.ids.main_humidity_cover.size_hint = (0.5,0.4)
-        #     self.ids.reactor_main_layout.spacing = 0
-        #     self.ids.humidity_graph_cover.size_hint = (0.5,None)
-        #     # print "yes"
+            self.ratio_high = 0.010
         else:
-            self.ratio = 4
-        #     self.ids.temp_meter.size_hint = (1,None)
-        #     self.ids.temp_graph_cover.size_hint = (1,None)
-        #     self.ids.humidity_graph_cover.size_hint= (1,None)
-        #     self.ids.reactor_main_layout.spacing = 30
+            self.ratio = 3
+            self.ratio_high = 0.015
+    
+        
 
 
     
     def get_value(self,dt):
+
         self.main_header_color = netstatus_color
         self.ids.graph_temp.add_plot(self.plot_temp);
-        self.ids.graph_humidity.add_plot(self.plot_humidity);
+        self.ids.graph_temp.add_plot(self.plot_humidity);
         self.ids.net.netstattxt = netstatus
         self.ids.net.netstatuscolor = netstatus_color
-        self.plot_temp.points = [(i-25, j) for i, j in enumerate(levels_temp[0])]
-        self.plot_humidity.points = [(i-25, j) for i, j in enumerate(levels_humidity[0])]
+
+        self.plot_temp.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_temp[0])]
+        self.plot_humidity.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_humidity[0])]
         # print self.plot.points
         self.temp_value = temp[0]
         self.humidity_value = 0
@@ -233,24 +243,8 @@ class ReactorScreen1(ReactorScreen):
         self.temp_strval = str(round(self.temp_value,2))+ u'\u00b0' + 'C'
         self.humidity_strval = str(round(self.humidity_value,2))+ "%"
         self.humidity_angle = 3.6*self.humidity_value
-
-        if self.temp_value > 50:
-            self.sen_color_temp = get_color_from_hex('#C73C4C')
-
-        elif self.temp_value < 20:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        if self.humidity_value > 50:
-            self.sen_color_humidity = get_color_from_hex('#C73C4C')
-
-        elif self.humidity_value < 20:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
+        self.sen_color_temp = get_color_from_hex('#23C48E');
+        self.sen_color_humidity = get_color_from_hex('#04C0F8');
 
 
 
@@ -263,37 +257,30 @@ class ReactorScreen2(ReactorScreen):
         self.name = "reactor2"
         Clock.schedule_once(self._finish_init)
         Clock.schedule_interval(self.get_value, 1)
-        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
-        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
+        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#23C48E'))
+        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#04C0F8'))
 
 
     def _finish_init(self, dt): 
         
         self.ids.main_label.text = "SENSOR 2"
-        # print "added" 
-        # if Window.size[0] > 500:
-        #     self.ids.humid_meter.size_hint = (0.5,None)
-        #     self.ids.temp_meter.size_hint = (0.5,None)
-        #     self.ids.temp_graph_cover.size_hint = (0.5,None)
-        #     self.ids.humidity_graph_cover.size_hint = (0.5,None)
-        #     # print "yes"
-        # else:
-        #     self.ids.humid_meter.size_hint = (1,None)
-        #     self.ids.temp_meter.size_hint = (1,None)
-        #     self.ids.temp_graph_cover.size_hint = (1,None)
-        #     self.ids.humidity_graph_cover.size_hint= (1,None)
-        #     self.ids.reactor_main_layout.spacing = 30
+        if Window.size[0] > 500:
+            self.ratio = 6
+            self.ratio_high = 0.010
+        else:
+            self.ratio = 3
+            self.ratio_high = 0.015
 
 
     
     def get_value(self,dt):
         self.main_header_color = netstatus_color
         self.ids.graph_temp.add_plot(self.plot_temp);
-        self.ids.graph_humidity.add_plot(self.plot_humidity);
+        self.ids.graph_temp.add_plot(self.plot_humidity);
         self.ids.net.netstattxt = netstatus
         self.ids.net.netstatuscolor = netstatus_color
-        self.plot_temp.points = [(i-25, j) for i, j in enumerate(levels_temp[1])]
-        self.plot_humidity.points = [(i-25, j) for i, j in enumerate(levels_humidity[1])]
+        self.plot_temp.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_temp[1])]
+        self.plot_humidity.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_humidity[1])]
         # print self.plot.points
         self.temp_value = temp[1]
         self.humidity_value = 0
@@ -302,24 +289,8 @@ class ReactorScreen2(ReactorScreen):
         self.humidity_strval = str(round(self.humidity_value,2))+ "%"
         self.humidity_angle = 3.6*self.humidity_value
 
-        if self.temp_value > 50:
-            self.sen_color_temp = get_color_from_hex('#C73C4C')
-
-        elif self.temp_value < 20:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        if self.humidity_value > 50:
-            self.sen_color_humidity = get_color_from_hex('#C73C4C')
-
-        elif self.humidity_value < 20:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
+        self.sen_color_temp = get_color_from_hex('#23C48E');
+        self.sen_color_humidity = get_color_from_hex('#04C0F8');
 
 # Reactor 3
 class ReactorScreen3(ReactorScreen):
@@ -328,37 +299,29 @@ class ReactorScreen3(ReactorScreen):
         self.name = "reactor3"
         Clock.schedule_once(self._finish_init)
         Clock.schedule_interval(self.get_value, 1)
-        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
-        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
+        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#23C48E'))
+        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#04C0F8'))
 
 
     def _finish_init(self, dt): 
         self.ids.main_label.text = "SENSOR 3"
-        # print "added" 
-        # if Window.size[0] > 500:
-        #     self.ids.humid_meter.size_hint = (0.5,None)
-        #     self.ids.temp_meter.size_hint = (0.5,None)
-        #     self.ids.temp_graph_cover.size_hint = (0.5,None)
-        #     self.ids.humidity_graph_cover.size_hint = (0.5,None)
-        #     # print "yes"
-        # else:
-        #     pass
-            # self.ids.humid_meter.size_hint = (1,None)
-            # self.ids.temp_meter.size_hint = (1,None)
-            # self.ids.temp_graph_cover.size_hint = (1,None)
-            # self.ids.humidity_graph_cover.size_hint= (1,None)
-            # self.ids.reactor_main_layout.spacing = 30
+        if Window.size[0] > 500:
+            self.ratio = 6
+            self.ratio_high = 0.010
+        else:
+            self.ratio = 3
+            self.ratio_high = 0.015
 
 
     
     def get_value(self,dt):
         self.main_header_color = netstatus_color
         self.ids.graph_temp.add_plot(self.plot_temp);
-        self.ids.graph_humidity.add_plot(self.plot_humidity);
+        self.ids.graph_temp.add_plot(self.plot_humidity);
         self.ids.net.netstattxt = netstatus
         self.ids.net.netstatuscolor = netstatus_color
-        self.plot_temp.points = [(i-25, j) for i, j in enumerate(levels_temp[2])]
-        self.plot_humidity.points = [(i-25, j) for i, j in enumerate(levels_humidity[2])]
+        self.plot_temp.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_temp[2])]
+        self.plot_humidity.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_humidity[2])]
         # print self.plot.points
         self.temp_value = temp[2]
         self.humidity_value = 0
@@ -366,25 +329,8 @@ class ReactorScreen3(ReactorScreen):
         self.temp_strval = str(round(self.temp_value,2))+ u'\u00b0' + 'C'
         self.humidity_strval = str(round(self.humidity_value,2))+ "%"
         self.humidity_angle = 3.6*self.humidity_value
-
-        if self.temp_value > 50:
-            self.sen_color_temp = get_color_from_hex('#C73C4C')
-
-        elif self.temp_value < 20:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        if self.humidity_value > 50:
-            self.sen_color_humidity = get_color_from_hex('#C73C4C')
-
-        elif self.humidity_value < 20:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
+        self.sen_color_temp = get_color_from_hex('#23C48E');
+        self.sen_color_humidity = get_color_from_hex('#04C0F8');
 
 class ReactorScreen4(ReactorScreen):
     def __init__(self,**kwargs):
@@ -392,62 +338,37 @@ class ReactorScreen4(ReactorScreen):
         self.name = "reactor4"
         Clock.schedule_once(self._finish_init)
         Clock.schedule_interval(self.get_value, 1)
-        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
-        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#3DA3D1'))
+        self.plot_temp = SmoothLinePlot(color = get_color_from_hex('#23C48E'))
+        self.plot_humidity = SmoothLinePlot(color = get_color_from_hex('#04C0F8'))
 
 
     def _finish_init(self, dt): 
         self.ids.main_label.text = "SENSOR 4"
-        # print "added" 
-        # if Window.size[0] > 500:
-        #     self.ids.humid_meter.size_hint = (0.5,None)
-        #     self.ids.temp_meter.size_hint = (0.5,None)
-        #     self.ids.temp_graph_cover.size_hint = (0.5,None)
-        #     self.ids.humidity_graph_cover.size_hint = (0.5,None)
-        #     # print "yes"
-        # else:
-        #     pass
-            # self.ids.humid_meter.size_hint = (1,None)
-            # self.ids.temp_meter.size_hint = (1,None)
-            # self.ids.temp_graph_cover.size_hint = (1,None)
-            # self.ids.humidity_graph_cover.size_hint= (1,None)
-            # self.ids.reactor_main_layout.spacing = 30
+        if Window.size[0] > 500:
+            self.ratio = 6
+            self.ratio_high = 0.010
+        else:
+            self.ratio = 3
+            self.ratio_high = 0.015
 
 
     
     def get_value(self,dt):
         self.main_header_color = netstatus_color
         self.ids.graph_temp.add_plot(self.plot_temp);
-        self.ids.graph_humidity.add_plot(self.plot_humidity);
+        self.ids.graph_temp.add_plot(self.plot_humidity);
         self.ids.net.netstattxt = netstatus
         self.ids.net.netstatuscolor = netstatus_color
-        self.plot_temp.points = [(i-25, j) for i, j in enumerate(levels_temp[3])]
-        self.plot_humidity.points = [(i-25, j) for i, j in enumerate(levels_humidity[3])]
-        # print self.plot.points
+        self.plot_temp.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_temp[3])]
+        self.plot_humidity.points = [(float(i)/3600-2, j) for i, j in enumerate(levels_humidity[3])]        
         self.temp_value = temp[3]
         self.humidity_value = 0
         self.temp_angle = 3.6*self.temp_value
         self.temp_strval = str(round(self.temp_value,2))+ u'\u00b0' + 'C'
         self.humidity_strval = str(round(self.humidity_value,2))+ "%"
         self.humidity_angle = 3.6*self.humidity_value
-
-        if self.temp_value > 50:
-            self.sen_color_temp = get_color_from_hex('#C73C4C')
-
-        elif self.temp_value < 20:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_temp = get_color_from_hex('#3DA3D1')
-
-        if self.humidity_value > 50:
-            self.sen_color_humidity = get_color_from_hex('#C73C4C')
-
-        elif self.humidity_value < 20:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
-
-        else:
-            self.sen_color_humidity = get_color_from_hex('#3DA3D1')
+        self.sen_color_temp = get_color_from_hex('#23C48E');
+        self.sen_color_humidity = get_color_from_hex('#04C0F8');
 
         
 
